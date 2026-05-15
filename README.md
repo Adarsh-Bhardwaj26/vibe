@@ -206,9 +206,9 @@ npm run dev
 ```
 
 The app will be available at:
-- Frontend: `http://localhost:5173`
-- Backend API: `http://localhost:5000/api/v1`
-- Health check: `http://localhost:5000/health`
+- Frontend: `https://vibe-brown-eight.vercel.app`
+- Backend API: `https://vibe-nkz9.onrender.com/api/v1`
+- Health check: `https://vibe-nkz9.onrender.com/health`
 
 ---
 
