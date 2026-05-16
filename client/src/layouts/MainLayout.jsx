@@ -41,9 +41,9 @@ export default function MainLayout({ children }) {
   return (
     <div className="flex min-h-screen bg-dark-100">
       {/* ─── Sidebar (Desktop) ──────────────────────────────────── */}
-      <aside className="hidden lg:flex flex-col w-[275px] fixed left-0 top-0 h-screen overflow-y-auto overscroll-contain scrollbar-hide border-r border-white/5 bg-dark-50 z-40 py-8 px-6">
+      <aside className="hidden lg:flex flex-col w-[275px] fixed left-0 top-0 h-screen overflow-y-auto overscroll-contain scrollbar-hide border-r border-white/5 bg-dark-50 z-40 py-6 px-6">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-4 px-2 mb-10 group">
+        <Link to="/" className="flex items-center gap-4 px-2 mb-6 group">
           <div className="w-12 h-12 gradient-bg rounded-2xl flex items-center justify-center shadow-glow group-hover:shadow-glow transition-shadow">
             <Sparkles className="text-white" size={24} />
           </div>
@@ -51,15 +51,15 @@ export default function MainLayout({ children }) {
         </Link>
 
         {/* Nav Links */}
-        <nav className="flex-1 space-y-3">
+        <nav className="flex-1 space-y-1.5">
           {navLinks.map(({ to, icon: Icon, label }) => (
             <Link
               key={to}
               to={to}
               id={`nav-${label.toLowerCase()}`}
-              className={isActive(to) ? 'flex items-center gap-4 px-4 py-3 rounded-2xl transition-all font-medium bg-primary-600/10 text-primary-400 text-xl' : 'flex items-center gap-4 px-4 py-3 rounded-2xl transition-all font-medium text-zinc-400 hover:text-white hover:bg-white/5 text-xl'}
+              className={isActive(to) ? 'flex items-center gap-4 px-4 py-2.5 rounded-xl transition-all font-medium bg-primary-600/10 text-primary-400 text-lg' : 'flex items-center gap-4 px-4 py-2.5 rounded-xl transition-all font-medium text-zinc-400 hover:text-white hover:bg-white/5 text-lg'}
             >
-              <Icon size={26} />
+              <Icon size={24} />
               <span>{label}</span>
             </Link>
           ))}
@@ -68,36 +68,36 @@ export default function MainLayout({ children }) {
           <button
             id="nav-create"
             onClick={() => setShowCreatePost(true)}
-            className="flex items-center gap-4 px-4 py-3 rounded-2xl transition-all font-medium text-zinc-400 hover:text-white hover:bg-white/5 text-xl w-full text-left"
+            className="flex items-center gap-4 px-4 py-2.5 rounded-xl transition-all font-medium text-zinc-400 hover:text-white hover:bg-white/5 text-lg w-full text-left"
           >
-            <PlusSquare size={26} />
+            <PlusSquare size={24} />
             <span>Create Post</span>
           </button>
         </nav>
 
         {/* Bottom section */}
-        <div className="space-y-3 mt-6 border-t border-white/5 pt-6">
+        <div className="space-y-1.5 mt-4 border-t border-white/5 pt-4">
           {user?.role === 'admin' && (
-            <Link to="/admin" className={isActive('/admin') ? 'flex items-center gap-4 px-4 py-3 rounded-2xl transition-all font-medium bg-primary-600/10 text-primary-400 text-xl' : 'flex items-center gap-4 px-4 py-3 rounded-2xl transition-all font-medium text-zinc-400 hover:text-white hover:bg-white/5 text-xl'}>
-              <Shield size={26} />
+            <Link to="/admin" className={isActive('/admin') ? 'flex items-center gap-4 px-4 py-2.5 rounded-xl transition-all font-medium bg-primary-600/10 text-primary-400 text-lg' : 'flex items-center gap-4 px-4 py-2.5 rounded-xl transition-all font-medium text-zinc-400 hover:text-white hover:bg-white/5 text-lg'}>
+              <Shield size={24} />
               <span>Admin</span>
             </Link>
           )}
           <Link
             to={`/profile/${user?.username}`}
-            className={isActive('/profile') ? 'flex items-center gap-4 px-4 py-3 rounded-2xl transition-all font-medium bg-primary-600/10 text-primary-400 text-xl' : 'flex items-center gap-4 px-4 py-3 rounded-2xl transition-all font-medium text-zinc-400 hover:text-white hover:bg-white/5 text-xl'}
+            className={isActive('/profile') ? 'flex items-center gap-4 px-4 py-2.5 rounded-xl transition-all font-medium bg-primary-600/10 text-primary-400 text-lg' : 'flex items-center gap-4 px-4 py-2.5 rounded-xl transition-all font-medium text-zinc-400 hover:text-white hover:bg-white/5 text-lg'}
           >
             <div className="relative">
               {user?.avatar?.url ? (
-                <img src={user.avatar.url} alt={user.username} className="w-8 h-8 rounded-full object-cover" />
+                <img src={user.avatar.url} alt={user.username} className="w-7 h-7 rounded-full object-cover" />
               ) : (
-                <User size={26} />
+                <User size={24} />
               )}
             </div>
             <span className="truncate">{user?.username || 'Profile'}</span>
           </Link>
-          <Link to="/settings" className={isActive('/settings') ? 'flex items-center gap-4 px-4 py-3 rounded-2xl transition-all font-medium bg-primary-600/10 text-primary-400 text-xl' : 'flex items-center gap-4 px-4 py-3 rounded-2xl transition-all font-medium text-zinc-400 hover:text-white hover:bg-white/5 text-xl'}>
-            <Settings size={26} />
+          <Link to="/settings" className={isActive('/settings') ? 'flex items-center gap-4 px-4 py-2.5 rounded-xl transition-all font-medium bg-primary-600/10 text-primary-400 text-lg' : 'flex items-center gap-4 px-4 py-2.5 rounded-xl transition-all font-medium text-zinc-400 hover:text-white hover:bg-white/5 text-lg'}>
+            <Settings size={24} />
             <span>Settings</span>
           </Link>
           <button onClick={() => {
@@ -105,16 +105,15 @@ export default function MainLayout({ children }) {
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
-            // Dispatch a small event so we can force re-render if needed, but CSS handles most of it.
-          }} className="flex items-center gap-4 px-4 py-3 rounded-2xl transition-all font-medium w-full text-left text-zinc-400 hover:text-white hover:bg-white/5 text-xl">
+          }} className="flex items-center gap-4 px-4 py-2.5 rounded-xl transition-all font-medium w-full text-left text-zinc-400 hover:text-white hover:bg-white/5 text-lg">
             <span className="flex items-center gap-4">
-              <span className="hidden dark:inline"><Moon size={26} /></span>
-              <span className="inline dark:hidden"><Sun size={26} /></span>
+              <span className="hidden dark:inline"><Moon size={24} /></span>
+              <span className="inline dark:hidden"><Sun size={24} /></span>
               Toggle Theme
             </span>
           </button>
-          <button onClick={handleLogout} className="flex items-center gap-4 px-4 py-3 rounded-2xl transition-all font-medium w-full text-left text-red-400 hover:text-red-300 hover:bg-red-500/10 text-xl">
-            <LogOut size={26} />
+          <button onClick={handleLogout} className="flex items-center gap-4 px-4 py-2.5 rounded-xl transition-all font-medium w-full text-left text-red-400 hover:text-red-300 hover:bg-red-500/10 text-lg">
+            <LogOut size={24} />
             <span>Logout</span>
           </button>
         </div>

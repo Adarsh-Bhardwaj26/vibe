@@ -28,7 +28,7 @@ export default function HomePage() {
   }, [inView]);
 
   return (
-    <div className="flex justify-center max-w-[1200px] mx-auto px-4 lg:px-8 py-8 gap-8">
+    <div className="flex justify-center max-w-[1000px] mx-auto px-4 lg:px-8 py-8 gap-8">
       {/* ─── Feed ─────────────────────────────────────────────────── */}
       <div className="flex-1 max-w-[600px] w-full">
         {/* Stories */}
