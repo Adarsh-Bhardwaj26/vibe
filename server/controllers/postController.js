@@ -361,24 +361,64 @@ exports.getSavedPosts = asyncHandler(async (req, res) => {
 // ─── Search Posts ─────────────────────────────────────────────────────────────
 exports.searchPosts = asyncHandler(async (req, res) => {
   const { q, page = 1, limit = 10 } = req.query;
-  if (!q) throw new AppError('Search query is required.', 400);
 
-  const skip = (page - 1) * limit;
-  const posts = await Post.find({
+  // Return empty list if query is empty or whitespace
+  if (!q || !q.trim()) {
+    return res.status(200).json({
+      success: true,
+      posts: [],
+      pagination: { total: 0, page: Number(page), pages: 0, hasMore: false },
+    });
+  }
+
+  const trimmedQuery = q.trim();
+  const escapedQuery = trimmedQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+  // Strip leading hashtag for tag searching
+  const hashtagQuery = trimmedQuery.startsWith('#') ? trimmedQuery.slice(1) : trimmedQuery;
+  const escapedHashtag = hashtagQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+  const pageNum = Math.max(1, parseInt(page, 10) || 1);
+  const limitNum = Math.max(1, Math.min(50, parseInt(limit, 10) || 10));
+  const skip = (pageNum - 1) * limitNum;
+
+  const query = {
     $or: [
-      { caption: { $regex: q, $options: 'i' } },
-      { hashtags: { $regex: q.replace('#', ''), $options: 'i' } },
+      { caption: { $regex: escapedQuery, $options: 'i' } },
+      { hashtags: { $regex: escapedHashtag, $options: 'i' } },
     ],
     isDeleted: false,
     isPublic: true,
-  })
+  };
+
+  const posts = await Post.find(query)
     .sort({ createdAt: -1 })
     .skip(skip)
-    .limit(Number(limit))
-    .populate('author', 'username fullName avatar')
+    .limit(limitNum)
+    .populate('author', 'username fullName avatar isVerified')
     .lean();
 
-  res.status(200).json({ success: true, posts });
+  const total = await Post.countDocuments(query);
+
+  // Add viewer-specific flags
+  const postsWithFlags = posts.map((post) => ({
+    ...post,
+    isLiked: post.likes?.some((id) => id.toString() === req.user._id.toString()),
+    isSaved: post.saves?.some((id) => id.toString() === req.user._id.toString()),
+    likesCount: post.likes?.length || 0,
+    commentsCount: post.comments?.length || 0,
+  }));
+
+  res.status(200).json({
+    success: true,
+    posts: postsWithFlags,
+    pagination: {
+      total,
+      page: pageNum,
+      pages: Math.ceil(total / limitNum),
+      hasMore: skip + posts.length < total,
+    },
+  });
 });
 
 // ─── Report Post ──────────────────────────────────────────────────────────────

@@ -132,13 +132,28 @@ exports.toggleFollow = asyncHandler(async (req, res, next) => {
 // ─── Search Users ─────────────────────────────────────────────────────────────
 exports.searchUsers = asyncHandler(async (req, res) => {
   const { q, page = 1, limit = 10 } = req.query;
-  if (!q) throw new AppError('Search query is required.', 400);
 
-  const skip = (page - 1) * limit;
+  // Return empty list if query is empty or whitespace
+  if (!q || !q.trim()) {
+    return res.status(200).json({
+      success: true,
+      users: [],
+      pagination: { total: 0, page: Number(page), pages: 0 },
+    });
+  }
+
+  const trimmedQuery = q.trim();
+  // Escape regex special characters to prevent ReDoS (catastrophic backtracking)
+  const escapedQuery = trimmedQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+  const pageNum = Math.max(1, parseInt(page, 10) || 1);
+  const limitNum = Math.max(1, Math.min(50, parseInt(limit, 10) || 10));
+  const skip = (pageNum - 1) * limitNum;
+
   const query = {
     $or: [
-      { username: { $regex: q, $options: 'i' } },
-      { fullName: { $regex: q, $options: 'i' } },
+      { username: { $regex: escapedQuery, $options: 'i' } },
+      { fullName: { $regex: escapedQuery, $options: 'i' } },
     ],
     isActive: true,
   };
@@ -146,7 +161,7 @@ exports.searchUsers = asyncHandler(async (req, res) => {
   const users = await User.find(query)
     .select('username fullName avatar bio isVerified followers')
     .skip(skip)
-    .limit(Number(limit))
+    .limit(limitNum)
     .lean();
 
   const total = await User.countDocuments(query);
@@ -154,7 +169,7 @@ exports.searchUsers = asyncHandler(async (req, res) => {
   res.status(200).json({
     success: true,
     users,
-    pagination: { total, page: Number(page), pages: Math.ceil(total / limit) },
+    pagination: { total, page: pageNum, pages: Math.ceil(total / limitNum) },
   });
 });
 

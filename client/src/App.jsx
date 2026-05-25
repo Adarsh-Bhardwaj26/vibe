@@ -20,6 +20,7 @@ const NotificationsPage = lazy(() => import('./pages/NotificationsPage'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 const PostDetailPage = lazy(() => import('./pages/PostDetailPage'));
 const AdminPage = lazy(() => import('./pages/AdminPage'));
+const SearchPage = lazy(() => import('./pages/SearchPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
 // Full-screen loading spinner
@@ -113,6 +114,8 @@ export default function App() {
             {/* Protected routes (wrapped in layout) */}
             <Route path="/" element={<ProtectedRoute><MainLayout><HomePage /></MainLayout></ProtectedRoute>} />
             <Route path="/explore" element={<ProtectedRoute><MainLayout><ExplorePage /></MainLayout></ProtectedRoute>} />
+            <Route path="/search" element={<ProtectedRoute><MainLayout><SearchPage /></MainLayout></ProtectedRoute>} />
+           
             <Route path="/profile/:username" element={<ProtectedRoute><MainLayout><ProfilePage /></MainLayout></ProtectedRoute>} />
             <Route path="/chat" element={<ProtectedRoute><MainLayout><ChatPage /></MainLayout></ProtectedRoute>} />
             <Route path="/chat/:conversationId" element={<ProtectedRoute><MainLayout><ChatPage /></MainLayout></ProtectedRoute>} />
